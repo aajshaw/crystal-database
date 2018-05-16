@@ -1,0 +1,19 @@
+{
+  "name": "crystal-database",
+  "version": "1.0.0",
+  "description": "Record details of a collection of crystal with photographs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aajshaw/crystal-database.git"
+  },
+  "author": "Anthony Shaw",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aajshaw/crystal-database/issues"
+  },
+  "homepage": "https://github.com/aajshaw/crystal-database#readme"
+}
