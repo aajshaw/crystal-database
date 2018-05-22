@@ -15,5 +15,13 @@
   "bugs": {
     "url": "https://github.com/aajshaw/crystal-database/issues"
   },
-  "homepage": "https://github.com/aajshaw/crystal-database#readme"
+  "homepage": "https://github.com/aajshaw/crystal-database#readme",
+  "dependencies": {
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "npm": "^6.0.1",
+    "passport": "^0.4.0"
+  }
 }

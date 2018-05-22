@@ -15,7 +15,7 @@ const session = require('express-session');
 const config = require('./config/config');
 //const db = require('./db/db')();
 
-//require('./config/passport')(passport, db); // pass passport for configuration
+require('./config/passport')(passport, db); // pass passport for configuration
 
 // Set up express application
 app.use(cookieParser());
