@@ -1,0 +1,20 @@
+{
+  "development" : {
+    "operatorsAliases": false,
+    "logging": false,
+    "dialect": "sqlite",
+    "storage":"./data/development.sqlite"
+  },
+  "test": {
+    "operatorsAliases": false,
+    "logging": false,
+    "dialect": "sqlite",
+    "storage":"./data/test.sqlite"
+  },
+  "production": {
+    "operatorsAliases": false,
+    "logging": false,
+    "dialect": "sqlite",
+    "storage":"./data/crystal.sqlite"
+  }
+}

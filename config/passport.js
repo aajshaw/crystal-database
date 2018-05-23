@@ -1,11 +1,11 @@
 'use strict'
 
-const User = require('./models/user');
+//const User = require('./models/user');
 
 const LocalStrategy = require('passport-local').Strategy;
 
 // expose this function to app using module exports
-module.exports = function(passport) {
+module.exports = function(passport, User) {
   // used to serialize the user for the session
   passport.serializeUser(function(user, done) {
     done(null, user._id)

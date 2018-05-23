@@ -14,8 +14,10 @@ const session = require('express-session');
 
 const config = require('./config/config');
 //const db = require('./db/db')();
+const db = require('./models');
+//console.dir(db.User);
 
-require('./config/passport')(passport, db); // pass passport for configuration
+require('./config/passport')(passport, db.User); // pass passport for configuration
 
 // Set up express application
 app.use(cookieParser());
@@ -32,7 +34,20 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-require('./app/routes.js')(app, passport, db);
+//require('./app/routes.js')(app, passport, db);
 
-app.listen(port);
-console.log("Listening on port " + port);
+db.sequelize.sync().then(function () {
+  let user = db.User.build({username: "aajs", password: "xyzzy"});
+  user.save().then(() => {
+    db.User.findAll().then(users => {
+      console.log("Got users: " + users.length);
+//      console.log(users);
+    });
+  })
+  .catch(function(err) {
+    console.log(err.errors);
+    throw err;
+  });
+//  app.listen(port);
+//  console.log("Listening on port " + port);
+})
