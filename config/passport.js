@@ -39,7 +39,7 @@ module.exports = function(passport, User) {
         } else {
           // if there is no user with that username
           // create the user
-          let newUser = User.create();
+          let newUser = User.build();
           // set the user's local credentials
           newUser.username = username;
           newUser.password = newUser.generateHash(password);

@@ -34,20 +34,19 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-//require('./app/routes.js')(app, passport, db);
+require('./app/routes.js')(app, passport, db);
 
 db.sequelize.sync().then(function () {
-  let user = db.User.build({username: "aajs", password: "xyzzy"});
-  user.save().then(() => {
-    db.User.findAll().then(users => {
-      console.log("Got users: " + users.length);
-//      console.log(users);
-    });
-  })
-  .catch(function(err) {
-    console.log(err.errors);
-    throw err;
-  });
-//  app.listen(port);
-//  console.log("Listening on port " + port);
-})
+  // let user = db.User.build({username: "aajs", password: "xyzzy"});
+  // user.save().then(() => {
+  //   db.User.findAll().then(users => {
+  //     console.log("Got users: " + users.length);
+  //   });
+  // })
+  // .catch(function(err) {
+  //   console.log(err.errors);
+  //   throw err;
+  // });
+ app.listen(port);
+ console.log("Listening on port " + port);
+});
