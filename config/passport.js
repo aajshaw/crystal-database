@@ -8,12 +8,19 @@ const LocalStrategy = require('passport-local').Strategy;
 module.exports = function(passport, User) {
   // used to serialize the user for the session
   passport.serializeUser(function(user, done) {
-    done(null, user._id)
+    done(null, user.id)
   });
   // used to deserialize user
   passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
-      done(err, user);
+    // User.findById(id, function(err, user) {
+    //   done(err, user);
+    // });
+    User.findById(id).then(user => {
+      if (user) {
+        done(null, user);
+      } else {
+        done("User not found", null);
+      }
     });
   });
 
@@ -24,31 +31,25 @@ module.exports = function(passport, User) {
     passReqToCallback : true // allows us to pass back the entire request to the callback
   },
   function(req, username, password, done) {
-    // asynchronous
-    // User.findOne wont fire unless data is sent back
     process.nextTick(function() {
-      // find a user whose username is the same as the forms username
-      // we are checking to see if the user trying to login already exists
-      User.findByUsername(username, function(err, user) {
-        // if there are any errors, return the error
-        if (err)
-          return done(err);
-        // check to see if theres already a user with that username
+      // Find a user whose username is the same as the username passed in
+      User.findOne({ where: { username: username }}).then(user => {
         if (user) {
+          // Name already in use
           return done(null, false, req.flash('signupMessage', 'That username is already taken.'));
         } else {
-          // if there is no user with that username
-          // create the user
+          // Create the new user
           let newUser = User.build();
-          // set the user's local credentials
+          console.log("Step 10");
           newUser.username = username;
-          newUser.password = newUser.generateHash(password);
-          // save the user
-          newUser.save(function(err) {
-            if (err) {
-              throw err;
-            }
-            return done(null, newUser);
+          console.log("Step 20");
+          newUser.password = User.generateHash(password);
+          console.log("Step 30");
+          newUser.save().then(function (user) {
+            console.log("Step 40");
+            console.dir(user);
+//            return done(null, false, req.flash('signupMessage', 'WTF'));
+            return done(null, user);
           });
         }
       });
@@ -61,14 +62,11 @@ module.exports = function(passport, User) {
     passReqToCallback: true
   },
   function(req, username, password, done) {
-    User.findByUsername(username, function(err, user) {
-      if (err) {
-        return done(err);
-      }
+    User.findOne({ where: { username: username}}).then(user => {
       if (!user) {
         return done(null, false, req.flash('loginMessage', 'No user found'));
       }
-      if (!user.validPassword(password)) {
+      if (!user.validatePassword(password)) {
         return done(null, false, req.flash('loginMessage', "Wrong password"));
       }
       return done(null, user);
