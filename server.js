@@ -47,6 +47,13 @@ db.sequelize.sync().then(function () {
   //   console.log(err.errors);
   //   throw err;
   // });
+  // let item = db.Item.build({name: 'Swan'});
+  // item.save().then(() => {
+  //   return db.Item.findAll();
+  // })
+  // .then(items => {
+  //   console.log("got items " + items.length);
+  // });
  app.listen(port);
  console.log("Listening on port " + port);
 });

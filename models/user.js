@@ -8,10 +8,12 @@ module.exports = (sequelize, DataTypes) => {
     password: { type: DataTypes.STRING, allowNull: false }
   });
 
+  // 'class' level functions
   User.generateHash = function(password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(4), null);
   };
 
+  // 'instance' level functions
   User.prototype.validatePassword = function(password) {
     return bcrypt.compareSync(password, this.password);
   };

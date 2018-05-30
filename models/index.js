@@ -29,16 +29,18 @@ if (config.use_env_variable) {
 //   });
 
 fs
+  // Get a list of all .js files (except basename) as models
   .readdirSync(__dirname)
   .filter(file => {
     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
   })
+  // for all models make an entry in the database
   .forEach(file => {
     var model = sequelize['import'](path.join(__dirname, file));
-//    console.dir(model);
     db[model.name] = model;
   });
 
+// set up all of the associations
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
