@@ -5,7 +5,6 @@ const moment = require('moment');
 module.exports = function(app, passport, db) {
   // HOME PAGE (with login links)
   app.get('/', function(req, res) {
-    console.log("index");
     db.User.count().then(function (userCount) {
       if (userCount < 2) {
         res.render('pages/index.ejs');
@@ -55,9 +54,17 @@ module.exports = function(app, passport, db) {
   });
 
   app.get('/dashboard', isLoggedIn, function(req, res) {
-    res.render('pages/dashboard.ejs', {
-      user: req.user,
-    })
+    db.Item.count().then(function(itemCount) {
+      res.render('pages/dashboard.ejs', { navigation: 'dashboard', user: req.user, itemCount: itemCount });
+    });
+  });
+
+  app.get('/add', isLoggedIn, function(req, res) {
+    res.render('pages/add.ejs', { navigation: 'add' });
+  });
+
+  app.get('/list', isLoggedIn, function(req, res) {
+    res.render('pages/list.ejs', { navigation: 'list' });
   });
 };
 
