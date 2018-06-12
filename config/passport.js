@@ -40,15 +40,9 @@ module.exports = function(passport, User) {
         } else {
           // Create the new user
           let newUser = User.build();
-          console.log("Step 10");
           newUser.username = username;
-          console.log("Step 20");
           newUser.password = User.generateHash(password);
-          console.log("Step 30");
           newUser.save().then(function (user) {
-            console.log("Step 40");
-            console.dir(user);
-//            return done(null, false, req.flash('signupMessage', 'WTF'));
             return done(null, user);
           });
         }

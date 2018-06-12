@@ -66,6 +66,26 @@ module.exports = function(app, passport, db) {
   app.get('/list', isLoggedIn, function(req, res) {
     res.render('pages/list.ejs', { navigation: 'list' });
   });
+
+  app.post('/create', isLoggedIn, function(req, res) {
+    if (req.body.description.length > 0) {
+      let newItem = db.Item.build();
+      newItem.name = req.body.description;
+      if (req.body.value.length > 0) {
+        newItem.value = req.body.value;
+        if (req.body.value_approximate == "on") {
+          newItem.value_approximate = "Y";
+        } else {
+          newItem.value_approximate = "N";
+        }
+      }
+      newItem.save().then(function (user) {
+        res.render('pages/add', {navigation: 'add', message: req.body.description + " added"});
+      });
+    } else {
+      res.render('pages/add', {navigation: 'add', message: 'No description given' });
+    }
+  });
 };
 
 // route middleware to make sure user is logged in
