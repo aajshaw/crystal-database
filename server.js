@@ -11,6 +11,7 @@ const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const fileUpload = require('express-fileupload');
 
 const config = require('./config/config');
 //const db = require('./db/db')();
@@ -22,6 +23,8 @@ require('./config/passport')(passport, db.User); // pass passport for configurat
 // Set up express application
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(fileUpload({ abortOnLimit: true, limits: { filesize: 1024 * 1024 * 5 }}));
+app.use(express.static('data/photos'));
 app.set('view engine', 'ejs');
 
 // Set up passport

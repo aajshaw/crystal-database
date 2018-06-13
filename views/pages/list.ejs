@@ -5,5 +5,44 @@
   </head>
   <body>
     <% include ../partials/navigation %>
+
+    <div class="container">
+      <div class="col-sm-9 col-sm-offset-3">
+        <table class="table table-striped">
+          <tr>
+            <th>Description</th>
+            <th>Value</th>
+            <th>Photo</th>
+            <th>Actions</th>
+          </tr>
+          <% items.forEach(function (item) { -%>
+            <tr>
+              <td><%= item.name -%></td>
+              <td>
+                <% if (item.value == null) { -%>
+                  &nbsp;
+                <% } else { -%>
+                  <%= '£' + item.value -%>
+                  <% if (item.value_approximate == 'Y') { -%>
+                    &nbsp;(approx.)
+                  <% } -%>
+                <% } -%>
+              </td>
+              <td>
+                <% if (item.photo_filename != null) { -%>
+                  <img src="<%= item.photo_filename -%>" class="img-thumbnail img-responsive">
+                <% } else { -%>
+                  &nbsp;
+                <% } -%>
+              </td>
+              <td>
+                <a href="/update/<%= item.id -%>"><span class="fas fa-lg fa-edit" data-toggle="tooltip" title="Edit item"></span></a>
+                <a href="/delete/<%= item.id -%>" onclick="return confirm('Delete <%= item.name -%> permanently?')"><span class="fas fa-lg fa-trash" data-toggle="tooltip" title="Delete item"></span></a>
+              </td>
+            </tr>
+          <% }) -%>
+        </table>
+      </div>
+    </div>
   </body>
 </html>

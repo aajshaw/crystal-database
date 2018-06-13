@@ -1,6 +1,10 @@
 'use strict'
 
+const config = require('../config/config');
+const path = require('path');
 const moment = require('moment');
+const unf = require('unique-file-name').sync;
+const fileNamer = unf({format: '%100b_%10r%8e', dir: config.get('photosPath')});
 
 module.exports = function(app, passport, db) {
   // HOME PAGE (with login links)
@@ -15,7 +19,6 @@ module.exports = function(app, passport, db) {
   });
   // LOGIN
   app.get('/login', function(req, res) {
-    console.log("get login");
     db.User.count().then(function (userCount) {
     // render and pass in flash data if it exists
       res.render('pages/login.ejs', { message: req.flash('loginMessage'), showSignup: userCount < 2 });
@@ -30,7 +33,6 @@ module.exports = function(app, passport, db) {
 
   // SIGNUP
   app.get('/signup', function(req, res) {
-    console.log("get signup");
     db.User.count().then(function(userCount) {
       if (userCount < 2) {
         res.render('pages/signup.ejs', { message: req.flash('signupMessage') });
@@ -48,7 +50,6 @@ module.exports = function(app, passport, db) {
 
   // LOGOUT
   app.get('/logout', function(req, res) {
-    console.log("logout");
     req.logout();
     res.redirect('/');
   });
@@ -63,11 +64,7 @@ module.exports = function(app, passport, db) {
     res.render('pages/add.ejs', { navigation: 'add' });
   });
 
-  app.get('/list', isLoggedIn, function(req, res) {
-    res.render('pages/list.ejs', { navigation: 'list' });
-  });
-
-  app.post('/create', isLoggedIn, function(req, res) {
+  app.post('/add', isLoggedIn, function(req, res) {
     if (req.body.description.length > 0) {
       let newItem = db.Item.build();
       newItem.name = req.body.description;
@@ -79,12 +76,41 @@ module.exports = function(app, passport, db) {
           newItem.value_approximate = "N";
         }
       }
+      if (req.files.item_photo != undefined) {
+        let photo = req.files.item_photo;
+        let full = fileNamer(photo.name);
+        newItem.photo_filename = path.basename(full);
+        photo.mv(full);
+      }
       newItem.save().then(function (user) {
         res.render('pages/add', {navigation: 'add', message: req.body.description + " added"});
       });
     } else {
       res.render('pages/add', {navigation: 'add', message: 'No description given' });
     }
+  });
+
+  app.get('/list', isLoggedIn, function(req, res) {
+    db.Item.findAll({order: ['name']}).then(function (items) {
+      res.render('pages/list.ejs', { navigation: 'list', items: items, photoPath: config.get('photosPath') });
+    });
+  });
+
+  app.get('/update/:id', isLoggedIn, function(req, res) {
+    req.params['id']
+  });
+
+  app.get('/delete/:id', isLoggedIn, function(req, res) {
+    db.Item.findById(req.params['id']).then(function (item) {
+      if (item.photo_filename != null) {
+        // remove the photo file
+      }
+      item.destroy().then(function () {
+        db.Item.findAll({order: ['name']}).then(function (items) {
+          res.render('pages/list.ejs', { navigation: 'list', items: items, photoPath: config.get('photosPath') });
+        });
+      });
+    });
   });
 };
 

@@ -1,32 +1,19 @@
 'use strict';
 
-var fs        = require('fs');
-var path      = require('path');
-var Sequelize = require('sequelize');
-var basename  = path.basename(__filename);
-var env       = process.env.NODE_ENV || 'development';
-var config    = require(__dirname + '/../config/db.json')[env];
-var db        = {};
+const config = require('../config/config')
+const fs        = require('fs');
+const path      = require('path');
+const Sequelize = require('sequelize');
+const basename  = path.basename(__filename);
+const env       = config.get('env') || 'development';
+const dbConfig  = require(__dirname + '/../config/db.json')[env];
+const db        = {};
 
-if (config.use_env_variable) {
-  var sequelize = new Sequelize(process.env[config.use_env_variable], config);
+if (dbConfig.use_env_variable) {
+  var sequelize = new Sequelize(process.env[config.use_env_variable], dbConfig);
 } else {
-  var sequelize = new Sequelize(config.database, config.username, config.password, config);
+  var sequelize = new Sequelize(config.database, config.username, config.password, dbConfig);
 }
-// if (config.use_env_variable) {
-//   var sequelize = new Sequelize(process.env[config.use_env_variable], config);
-// } else {
-//   var sequelize = new Sequelize(config);
-// }
-
-// sequelize
-//   .authenticate()
-//   .then(() => {
-//     console.log("Connected");
-//   })
-//   .catch(err => {
-//     console.log('Connection failed:', err);
-//   });
 
 fs
   // Get a list of all .js files (except basename) as models

@@ -1,11 +1,15 @@
 "use strict"
 
+const nconf = require('nconf');
+
+nconf.file('./config/config.json');
+
+nconf.defaults({
+  "photosPath": 'data/photos'
+});
+
 module.exports = {
   get: function(key) {
-    if (key == 'session_secret') {
-      return 'secret';
-    } else {
-      throw 'config get unknown key ' + key;
-    }
+    return nconf.get(key);
   }
 };
