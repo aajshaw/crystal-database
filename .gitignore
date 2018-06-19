@@ -62,3 +62,6 @@ data/
 
 # Config
 config/config.json
+
+# Public
+public/

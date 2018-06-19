@@ -24,7 +24,7 @@ require('./config/passport')(passport, db.User); // pass passport for configurat
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(fileUpload({ abortOnLimit: true, limits: { filesize: 1024 * 1024 * 5 }}));
-app.use(express.static('data/photos'));
+app.use(express.static('public/photos'));
 app.set('view engine', 'ejs');
 
 // Set up passport
@@ -40,23 +40,6 @@ app.use(flash());
 require('./app/routes.js')(app, passport, db);
 
 db.sequelize.sync().then(function () {
-  // let user = db.User.build({username: "aajs", password: "xyzzy"});
-  // user.save().then(() => {
-  //   db.User.findAll().then(users => {
-  //     console.log("Got users: " + users.length);
-  //   });
-  // })
-  // .catch(function(err) {
-  //   console.log(err.errors);
-  //   throw err;
-  // });
-  // let item = db.Item.build({name: 'Swan'});
-  // item.save().then(() => {
-  //   return db.Item.findAll();
-  // })
-  // .then(items => {
-  //   console.log("got items " + items.length);
-  // });
  app.listen(port);
  console.log("Listening on port " + port);
 });

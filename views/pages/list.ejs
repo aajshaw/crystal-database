@@ -2,6 +2,15 @@
 <html>
   <head>
     <% include ../partials/head %>
+    <script>
+      function deleteItem(id, name) {
+        if (confirm('Delete ' + name + ' permanently?')) {
+          $.get("/delete/" + id, function (data, status) {
+            $('#item_row_' + id).remove();
+          });
+        }
+      }
+    </script>
   </head>
   <body>
     <% include ../partials/navigation %>
@@ -16,9 +25,9 @@
             <th>Actions</th>
           </tr>
           <% items.forEach(function (item) { -%>
-            <tr>
-              <td><%= item.name -%></td>
-              <td>
+            <tr id="item_row_<%= item.id -%>">
+              <td class="align-middle"><%= item.name -%></td>
+              <td class="align-middle">
                 <% if (item.value == null) { -%>
                   &nbsp;
                 <% } else { -%>
@@ -30,14 +39,14 @@
               </td>
               <td>
                 <% if (item.photo_filename != null) { -%>
-                  <img src="<%= item.photo_filename -%>" class="img-thumbnail img-responsive">
+                  <img src="/<%= item.photo_filename -%>" alt="wtf" class="img-thumbnail img-responsive">
                 <% } else { -%>
                   &nbsp;
                 <% } -%>
               </td>
-              <td>
-                <a href="/update/<%= item.id -%>"><span class="fas fa-lg fa-edit" data-toggle="tooltip" title="Edit item"></span></a>
-                <a href="/delete/<%= item.id -%>" onclick="return confirm('Delete <%= item.name -%> permanently?')"><span class="fas fa-lg fa-trash" data-toggle="tooltip" title="Delete item"></span></a>
+              <td class="align-middle">
+                <a href="/edit/<%= item.id -%>"><span class="fas fa-lg fa-edit" data-toggle="tooltip" title="Edit item"></span></a>
+                <span class="fas fa-lg fa-trash" data-toggle="tooltip" title="Delete item" onclick="deleteItem('<%= item.id -%>', '<%= item.name -%>')"></span>
               </td>
             </tr>
           <% }) -%>

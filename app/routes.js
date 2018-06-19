@@ -5,6 +5,7 @@ const path = require('path');
 const moment = require('moment');
 const unf = require('unique-file-name').sync;
 const fileNamer = unf({format: '%100b_%10r%8e', dir: config.get('photosPath')});
+const fs = require('fs');
 
 module.exports = function(app, passport, db) {
   // HOME PAGE (with login links)
@@ -92,24 +93,72 @@ module.exports = function(app, passport, db) {
 
   app.get('/list', isLoggedIn, function(req, res) {
     db.Item.findAll({order: ['name']}).then(function (items) {
-      res.render('pages/list.ejs', { navigation: 'list', items: items, photoPath: config.get('photosPath') });
+      res.render('pages/list.ejs', { navigation: 'list', items: items });
     });
   });
 
-  app.get('/update/:id', isLoggedIn, function(req, res) {
-    req.params['id']
+  app.get('/edit', isLoggedIn, function(req, res) {
+    db.Item.findAll({order: ['name']}).then(function (items) {
+      res.render('pages/list.ejs', { navigation: 'list', items: items });
+    });
+  });
+
+  app.get('/edit/:id', isLoggedIn, function(req, res) {
+    db.Item.findById(req.params['id'])
+    .then(function (item) {
+      res.render('pages/edit.ejs', { navigation: 'edit', item: item });
+    })
+  });
+
+  app.post('/edit', isLoggedIn, function(req, res) {
+    db.Item.findById(req.body.item_id)
+    .then(function(item) {
+      console.dir(req.body);
+      item.set({name: req.body.description});
+      if (req.body.value.length > 0) {
+        item.set({value: req.body.value});
+        if (req.body.value_approximate == "on") {
+          item.set({value_approximate: 'Y'});
+        } else {
+          item.set({value_approximate: 'N'});
+        }
+      } else {
+        item.set({value: null});
+        item.set({value_approximate: null});
+      }
+      if (req.files.item_photo != undefined) {
+        if (item.photo_filename != null) {
+          fs.unlinkSync(config.get('photosPath') + '/' + item.photo_filename);
+        }
+        let photo = req.files.item_photo;
+        let full = fileNamer(photo.name);
+        item.set({photo_filename: path.basename(full)});
+        photo.mv(full);
+      }
+      item.save();
+    })
+    .then(function() {
+      return db.Item.findAll({order: ['name']});
+    })
+    .then(function (items) {
+      res.render('pages/list.ejs', { navigation: 'list', items: items });
+    });
   });
 
   app.get('/delete/:id', isLoggedIn, function(req, res) {
-    db.Item.findById(req.params['id']).then(function (item) {
+    db.Item.findById(req.params['id'])
+    .then(function (item) {
       if (item.photo_filename != null) {
-        // remove the photo file
+        fs.unlinkSync(config.get('photosPath') + '/' + item.photo_filename);
       }
-      item.destroy().then(function () {
-        db.Item.findAll({order: ['name']}).then(function (items) {
-          res.render('pages/list.ejs', { navigation: 'list', items: items, photoPath: config.get('photosPath') });
-        });
-      });
+      item.destroy();
+    })
+    .then(function () {
+      return db.Item.findAll({order: ['name']});
+    })
+    .then(function (items) {
+      //res.render('pages/list.ejs', { navigation: 'list', items: items, photoPath: config.get('photosPath') });
+      res.status(200).send('OK');
     });
   });
 };

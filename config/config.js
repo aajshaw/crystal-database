@@ -5,7 +5,7 @@ const nconf = require('nconf');
 nconf.file('./config/config.json');
 
 nconf.defaults({
-  "photosPath": 'data/photos'
+  "photosPath": 'public/photos'
 });
 
 module.exports = {
