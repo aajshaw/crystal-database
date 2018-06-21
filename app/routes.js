@@ -6,6 +6,8 @@ const moment = require('moment');
 const unf = require('unique-file-name').sync;
 const fileNamer = unf({format: '%100b_%10r%8e', dir: config.get('photosPath')});
 const fs = require('fs');
+const glob = require('fast-glob');
+const zip = require('node-zip')();
 
 module.exports = function(app, passport, db) {
   // HOME PAGE (with login links)
@@ -53,6 +55,28 @@ module.exports = function(app, passport, db) {
   app.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
+  });
+
+  app.get('/backup', isLoggedIn, function(req, res) {
+    // create zip file
+    let backupFile = 'crystal_' + moment().format('YYYY-MM-DD_HHmmss') + '.zip';
+    glob([path.join(__dirname + '/../public') + '/**/*.*', path.join(__dirname + '/../data') + '/*.*'])
+    .then(function(entries) {
+      entries.forEach(function (entry) {
+        zip.file(path.relative(__dirname, entry), fs.readFileSync(entry));
+      });
+      let data = zip.generate({base64: false, compression: 'DEFLATE'});
+      fs.writeFileSync(backupFile, data, 'binary');
+    })
+    // download it
+    .then(function() {
+      res.download(backupFile, function (err) {
+        // On error leave the backup file in place
+        if (!err) {
+          fs.unlinkSync(backupFile);
+        }
+      });
+    })
   });
 
   app.get('/dashboard', isLoggedIn, function(req, res) {
