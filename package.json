@@ -22,7 +22,7 @@
     "cookie-parser": "^1.4.3",
     "ejs": "^3.1.7",
     "express": "^4.17.3",
-    "express-fileupload": "^0.4.0",
+    "express-fileupload": "^1.1.10",
     "express-session": "^1.15.6",
     "fast-glob": "^2.2.2",
     "nconf": "^0.10.0",
