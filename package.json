@@ -27,12 +27,12 @@
     "fast-glob": "^2.2.2",
     "nconf": "^0.10.0",
     "node-zip": "^1.1.1",
-    "npm": "^6.1.0",
+    "npm": "^6.14.17",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "sequelize": "^5.3.0",
     "sequelize-cli": "^4.0.0",
     "sqlite3": "^4.0.0",
-    "unique-file-name": "^0.1.7"
+    "unique-file-name": "^1.0.1"
   }
 }
